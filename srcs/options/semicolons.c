@@ -6,7 +6,7 @@
 /*   By: user42 <user42@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/12/07 13:47:34 by user42            #+#    #+#             */
-/*   Updated: 2021/01/22 13:48:49 by user42           ###   ########.fr       */
+/*   Updated: 2021/01/26 15:00:30 by user42           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,7 +21,9 @@ void	do_next_cmd(t_data *shell)
 	reset_stds(shell);
 	shell->params.semicolon--;
 	process_semicolon(shell, 0);
-	redir_cmd(shell, 0);
+	if (shell->arg[0] == NULL)
+		return ;
+	redir_cmd(shell, 0, 0, 0);
 	if (((shell->params.child && !shell->params.parent) \
 	|| (!shell->params.child \
 	&& !shell->params.parent)) && shell->params.semicolon && shell->pid == -1)

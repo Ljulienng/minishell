@@ -25,6 +25,7 @@ CMDS_FILES =	ft_pwd.c \
 				ft_cd.c \
 				ft_env.c \
 				ft_export.c \
+				ft_export2.c \
 				ft_unset.c
 OPTION_FILES = 	semicolons.c \
 				redirection.c \
@@ -32,7 +33,8 @@ OPTION_FILES = 	semicolons.c \
 				pipe.c
 TOOLS_FILES =	ft_tools.c \
 				ft_tools2.c \
-				ft_tools3.c
+				ft_tools3.c \
+				ft_tools4.c
 
 CMDS = $(addprefix $(CMDS_PATH), $(CMDS_FILES))
 CORE = $(addprefix $(CORE_PATH), $(CORE_FILES))

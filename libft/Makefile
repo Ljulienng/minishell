@@ -6,7 +6,7 @@
 #    By: user42 <user42@student.42.fr>              +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2019/10/10 14:56:19 by jnguyen           #+#    #+#              #
-#    Updated: 2020/11/26 11:18:12 by user42           ###   ########.fr        #
+#    Updated: 2021/01/28 19:36:21 by user42           ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -39,6 +39,7 @@ SRCS = ft_memset.c \
 	ft_memmove.c \
 	ft_memchr.c \
 	ft_memcmp.c \
+	ft_memdel.c \
 	ft_strlen.c \
 	ft_isalpha.c \
 	ft_isdigit.c \
@@ -60,6 +61,7 @@ SRCS = ft_memset.c \
 	ft_substr.c \
 	ft_strjoin.c \
 	ft_strtrim.c \
+	ft_strcmp.c \
 	ft_split.c \
 	ft_itoa.c \
 	ft_strmapi.c \

@@ -6,7 +6,7 @@
 /*   By: user42 <user42@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/01/13 14:52:24 by user42            #+#    #+#             */
-/*   Updated: 2021/01/25 13:28:24 by user42           ###   ########.fr       */
+/*   Updated: 2021/01/28 16:22:22 by user42           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -84,7 +84,7 @@ void		start_piping(t_data *shell, int index)
 			clean_str(arg);
 			return ;
 		}
-	if (!is_builtin(shell))
+	if (!is_builtin(shell, arg))
 		shell->ret = exec_bin(shell, arg);
 	if (arg[0] && arg)
 		clean_str(arg);

@@ -6,7 +6,7 @@
 /*   By: user42 <user42@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/10/21 15:08:24 by user42            #+#    #+#             */
-/*   Updated: 2021/01/25 12:28:08 by user42           ###   ########.fr       */
+/*   Updated: 2021/01/26 17:13:30 by user42           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,6 +15,7 @@
 void	reset_shell(t_data *shell)
 {
 	shell->noexec = 0;
+	shell->redir = 0;
 	shell->params.old_index = 0;
 	shell->params.opt_index = 0;
 	shell->params.arg_index = 0;

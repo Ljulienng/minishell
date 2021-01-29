@@ -6,14 +6,15 @@
 /*   By: user42 <user42@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/01/04 18:48:26 by julienngy         #+#    #+#             */
-/*   Updated: 2021/01/21 16:11:50 by user42           ###   ########.fr       */
+/*   Updated: 2021/01/26 18:39:02 by user42           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../includes/minishell.h"
 
-void		full_clean(t_data *shell)
+void		full_clean(t_data *shell, int *ret)
 {
+	*ret = shell->ret;
 	free_env(shell);
 	ft_lstclear(&(shell->trash), &free);
 	free(shell);

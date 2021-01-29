@@ -6,7 +6,7 @@
 /*   By: user42 <user42@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/11/23 14:58:45 by user42            #+#    #+#             */
-/*   Updated: 2021/01/14 16:28:28 by user42           ###   ########.fr       */
+/*   Updated: 2021/01/26 18:05:09 by user42           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -92,6 +92,8 @@ static int		ft_cd2(t_data *shell, int homeback)
 int				ft_cd(t_data *shell)
 {
 	int		ret;
+	char	*curr_pwd;
+	char	cwd[4096];
 
 	if (!shell->arg[1] || !ft_strncmp(shell->arg[1], "~", 2))
 		ret = ft_cd2(shell, 0);
@@ -106,5 +108,12 @@ int				ft_cd(t_data *shell)
 		if (ret)
 			cd_error(shell);
 	}
+	if (!(getcwd(cwd, 4096)))
+		return (0);
+	if (!(curr_pwd = ft_strjoin("PWD=", cwd)))
+		return (0);
+	del_env(shell, "PWD");
+	add_env(shell, curr_pwd);
+	free(curr_pwd);
 	return (ret);
 }

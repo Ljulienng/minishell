@@ -6,7 +6,7 @@
 /*   By: user42 <user42@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/01/06 16:02:13 by user42            #+#    #+#             */
-/*   Updated: 2021/01/21 15:52:54 by user42           ###   ########.fr       */
+/*   Updated: 2021/01/28 16:07:44 by user42           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -92,6 +92,7 @@ void	input(t_data *shell)
 		ft_printf_fd(2, "minishell >> %s : No such file or directory\n ", \
 		shell->arg[shell->params.old_index + 1]);
 		shell->ret = 1;
+		shell->noexec = 1;
 		return ;
 	}
 	dup2(shell->fd_in, 0);
@@ -112,6 +113,7 @@ void	redirect(t_data *shell, int curr_opt)
 		ft_printf_fd(2, "minishell >> %s : No such file or directory\n ", \
 		shell->arg[shell->params.old_index + 1]);
 		shell->ret = 1;
+		shell->noexec = 1;
 		return ;
 	}
 	if (curr_opt == R_ANGLE)

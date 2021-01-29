@@ -6,7 +6,7 @@
 /*   By: user42 <user42@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/12/14 15:49:10 by user42            #+#    #+#             */
-/*   Updated: 2021/01/25 13:32:58 by user42           ###   ########.fr       */
+/*   Updated: 2021/01/27 15:56:28 by user42           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,7 +57,8 @@ static int	ft_execve(t_data *shell, char *path, char **arg)
 		waitpid(shell->sig->pid, &ret, 0);
 	if (g_sig.sig_int == 1 || g_sig.sig_quit == 1)
 		return (g_sig.sig_exit);
-	ret = (ret == 256 || ret == 512) ? ret / 256 : !!ret;
+	ret = (ret == 256 || ret == 512 ||\
+	ret == 32512 || ret == 32256) ? ret / 256 : !!ret;
 	return (ret);
 }
 
@@ -91,8 +92,8 @@ int			exec_bin(t_data *shell, char **arg)
 	ret = 127;
 	while (shell->env[i] && ft_strncmp(shell->env[i], "PATH", 4))
 		i++;
-	if (!shell->env[i])
-		return (0);
+	if (!shell->env[i] || shell->env[i + 1] == NULL)
+		return (ft_execve(shell, arg[0], arg));
 	bin = ft_split(shell->env[i], ':');
 	i = 0;
 	path = check_dir(bin[i++] + 5, arg);

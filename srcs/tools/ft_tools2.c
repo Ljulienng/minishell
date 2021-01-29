@@ -6,7 +6,7 @@
 /*   By: user42 <user42@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/12/07 18:37:32 by user42            #+#    #+#             */
-/*   Updated: 2021/01/22 15:10:46 by user42           ###   ########.fr       */
+/*   Updated: 2021/01/27 15:56:20 by user42           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,21 +56,21 @@ int		is_option(t_data *shell, char *arg)
 	return (ret);
 }
 
-int		is_builtin(t_data *shell)
+int		is_builtin(t_data *shell, char **arg)
 {
-	if (!reco_cmd(shell->arg[0], "echo"))
+	if (!reco_cmd(arg[0], "echo"))
 		shell->ret = ft_echo(shell);
-	else if (!reco_cmd(shell->arg[0], "pwd"))
+	else if (!reco_cmd(arg[0], "pwd"))
 		shell->ret = ft_pwd(shell);
-	else if (!reco_cmd(shell->arg[0], "exit"))
+	else if (!reco_cmd(arg[0], "exit"))
 		ft_exit(shell);
-	else if (!reco_cmd(shell->arg[0], "cd"))
+	else if (!reco_cmd(arg[0], "cd"))
 		shell->ret = ft_cd(shell);
-	else if (!reco_cmd(shell->arg[0], "env"))
+	else if (!reco_cmd(arg[0], "env"))
 		ft_env(shell);
-	else if (!reco_cmd(shell->arg[0], "export"))
-		ft_export(shell);
-	else if (!reco_cmd(shell->arg[0], "unset"))
+	else if (!reco_cmd(arg[0], "export"))
+		shell->ret = ft_export(shell);
+	else if (!reco_cmd(arg[0], "unset"))
 		ft_unset(shell);
 	else
 		return (0);

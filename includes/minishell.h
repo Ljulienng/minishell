@@ -6,7 +6,7 @@
 /*   By: user42 <user42@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/01/14 16:12:55 by user42            #+#    #+#             */
-/*   Updated: 2021/01/25 12:28:42 by user42           ###   ########.fr       */
+/*   Updated: 2021/01/28 20:16:06 by user42           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -90,6 +90,7 @@ typedef struct		s_data
 	int				exit;
 	int				ret;
 	int				oldpwd;
+	int				redir;
 	t_sig			*sig;
 	t_param			params;
 	t_list			*trash;
@@ -97,25 +98,26 @@ typedef struct		s_data
 /*
 ** Commands
 */
-void				full_clean(t_data *shell);
+void				full_clean(t_data *shell, int *ret);
 int					ft_pwd(t_data *shell);
 void				ft_exit(t_data *shell);
 int					ft_echo(t_data *shell);
 int					ft_cd(t_data *shell);
 void				ft_env(t_data *shell);
-void				ft_export(t_data *shell);
+int					ft_export(t_data *shell);
 void				ft_unset(t_data *shell);
 int					exec_bin(t_data *shell, char **arg);
 /*
 ** detect_cmd.c
 */
-void				redir_cmd(t_data *shell, int index);
+void				redir_cmd(t_data *shell, int index, int prev, int next);
 void				detect_cmd(t_data *shell);
 void				count_arg(t_data *shell);
 int					store_arg(t_data *shell);
 int					split_quote(t_data *shell, int *i, int *y);
 int					split_option(t_data *shell, int *i, int *y);
 void				quote_switch(t_data *shell, int *i, char *str);
+void				quote_switch2(t_data *shell, int *i, char *str, int back);
 void				count_options(t_data *shell);
 /*
 ** core_env.c
@@ -126,6 +128,8 @@ void				free_env(t_data *shell);
 void				print_env(t_data *shell, char *env);
 int					exec_env(t_data *shell, char **arg);
 int					del_env(t_data *shell, char *env);
+void				sorted_env(t_data *shell);
+int					is_valid_env(char *env);
 /*
 ** ft_tools.c
 */
@@ -137,7 +141,7 @@ void				lst_malloc(void **to_malloc, size_t size, t_data *shell);
 int					ft_argisnum(char *str);
 void				reset_options(t_data *shell);
 int					is_option(t_data *shell, char *arg);
-int					is_builtin(t_data *shell);
+int					is_builtin(t_data *shell, char **arg);
 void				free_arg(t_data *shell);
 char				*join_path(const char *s1, const char *s2);
 void				clean_str(char **str);

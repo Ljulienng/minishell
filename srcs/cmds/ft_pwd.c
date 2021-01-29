@@ -6,7 +6,7 @@
 /*   By: user42 <user42@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/10/19 16:55:31 by user42            #+#    #+#             */
-/*   Updated: 2021/01/22 15:07:29 by user42           ###   ########.fr       */
+/*   Updated: 2021/01/27 15:14:22 by user42           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,7 +23,7 @@ int		ft_pwd(t_data *shell)
 	}
 	chdir = NULL;
 	chdir = getcwd(NULL, 0);
-	ft_printf("%s\n", chdir);
+	ft_printf_fd(1, "%s\n", chdir);
 	free(chdir);
 	return (0);
 }

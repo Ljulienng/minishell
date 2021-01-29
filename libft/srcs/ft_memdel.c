@@ -1,22 +1,23 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_env.c                                           :+:      :+:    :+:   */
+/*   ft_memdel.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: user42 <user42@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2020/11/24 15:46:54 by user42            #+#    #+#             */
-/*   Updated: 2021/01/27 16:04:44 by user42           ###   ########.fr       */
+/*   Created: 2021/01/28 19:35:24 by user42            #+#    #+#             */
+/*   Updated: 2021/01/28 19:35:28 by user42           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../../includes/minishell.h"
+#include "libft.h"
 
-void	ft_env(t_data *shell)
+void	*ft_memdel(void *ptr)
 {
-	int i;
-
-	i = 0;
-	while (shell->env[i])
-		printf("%s\n", shell->env[i++]);
+	if (ptr)
+	{
+		free(ptr);
+		ptr = NULL;
+	}
+	return (NULL);
 }

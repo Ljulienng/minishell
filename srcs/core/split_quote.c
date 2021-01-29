@@ -6,14 +6,17 @@
 /*   By: user42 <user42@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/11/03 15:08:16 by user42            #+#    #+#             */
-/*   Updated: 2021/01/14 20:24:43 by user42           ###   ########.fr       */
+/*   Updated: 2021/01/28 15:51:42 by user42           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../includes/minishell.h"
 
-void		quote_switch(t_data *shell, int *i, char *str)
+void			quote_switch2(t_data *shell, int *i, char *str, int back)
 {
+	if ((*i > 1 && back % 2 != 0 && \
+	str[*i - 1] == '\\') && str[*i] == '"')
+		return ;
 	if (!shell->squote_flag && str[*i] == '"')
 	{
 		if (shell->dquote_flag)
@@ -30,7 +33,28 @@ void		quote_switch(t_data *shell, int *i, char *str)
 	}
 }
 
-static void	handle_dquote(t_data *shell, int *i, int *y)
+void			quote_switch(t_data *shell, int *i, char *str)
+{
+	if ((*i > 1 && str[*i - 2] != '\\' && \
+	str[*i - 1] == '\\') && str[*i] == '"')
+		return ;
+	if (!shell->squote_flag && str[*i] == '"')
+	{
+		if (shell->dquote_flag)
+			shell->dquote_flag = 0;
+		else
+			shell->dquote_flag = 1;
+	}
+	if (!shell->dquote_flag && str[*i] == '\'')
+	{
+		if (shell->squote_flag)
+			shell->squote_flag = 0;
+		else
+			shell->squote_flag = 1;
+	}
+}
+
+static void		handle_dquote(t_data *shell, int *i, int *y, int back)
 {
 	if (shell->cmd_line[*i] == '"')
 		shell->dquote_flag = 1;
@@ -41,7 +65,7 @@ static void	handle_dquote(t_data *shell, int *i, int *y)
 		shell->arg[shell->i][*y] = shell->cmd_line[*i];
 		*i += 1;
 		*y += 1;
-		quote_switch(shell, i, shell->cmd_line);
+		quote_switch2(shell, i, shell->cmd_line, back);
 		if (!shell->dquote_flag && !shell->squote_flag && \
 			(shell->cmd_line[*i + 1] == ' ' || !shell->cmd_line[*i + 1]))
 			break ;
@@ -50,7 +74,7 @@ static void	handle_dquote(t_data *shell, int *i, int *y)
 	*i += 1;
 }
 
-void		count_options(t_data *shell)
+void			count_options(t_data *shell)
 {
 	int i;
 
@@ -74,10 +98,18 @@ void		count_options(t_data *shell)
 		shell->params.has_option = 1;
 }
 
-int			split_quote(t_data *shell, int *i, int *y)
+int				split_quote(t_data *shell, int *i, int *y)
 {
+	int j;
+	int	back;
+
+	back = 0;
+	j = 0;
+	while (shell->cmd_line[j])
+		if (shell->cmd_line[j++] == '\\')
+			back++;
 	if (is_from(shell->cmd_line[*i], "\"'"))
-		handle_dquote(shell, i, y);
+		handle_dquote(shell, i, y, back);
 	if (!shell->dquote_flag && !shell->squote_flag)
 		return (1);
 	else

@@ -6,7 +6,7 @@
 /*   By: user42 <user42@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/10/19 16:55:42 by user42            #+#    #+#             */
-/*   Updated: 2021/01/21 16:10:44 by user42           ###   ########.fr       */
+/*   Updated: 2021/01/29 14:43:36 by user42           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,7 +38,7 @@ static int	main_loop(char **env, t_data *shell)
 	{
 		signal_handlers(shell);
 		gnl = get_next_line(0, &shell->cmd_line);
-		if (!gnl && shell->cmd_line[0] == '\0' && (shell->exit = 1))
+		if (gnl == -2 && shell->cmd_line[0] == '\0' && (shell->exit = 1))
 			ft_printf_fd(STDERR, "\nexit\n");
 		detect_cmd(shell);
 		reset_shell(shell);
@@ -49,7 +49,7 @@ static int	main_loop(char **env, t_data *shell)
 			break ;
 		shell->noexec = 0;
 	}
-	full_clean(shell);
+	full_clean(shell, &ret);
 	return (ret);
 }
 

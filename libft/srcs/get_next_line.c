@@ -6,7 +6,7 @@
 /*   By: user42 <user42@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/12/04 11:27:19 by jnguyen           #+#    #+#             */
-/*   Updated: 2021/01/21 20:44:15 by user42           ###   ########.fr       */
+/*   Updated: 2021/01/29 17:45:59 by user42           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,6 +17,24 @@
 #include <fcntl.h>
 #include <unistd.h>
 #include "libft.h"
+
+static int			newline_check(char *stock, int read_size)
+{
+	int	i;
+
+	i = 0;
+	if (read_size == 0 && stock[0] == '\0')
+		return (2);
+	if (read_size == 0 || stock == NULL)
+		return (0);
+	while (stock[i] != '\0')
+	{
+		if (stock[i] == '\n')
+			return (1);
+		i++;
+	}
+	return (0);
+}
 
 static int			ft_strchr_gnl(char *s, char c)
 {
@@ -47,7 +65,7 @@ static char			*strjoingnl(char const *s1, char const *s2, unsigned int n)
 		size = ft_strlen(s1) + ft_strlen(s2);
 	if (!(dest = ft_calloc(1, sizeof(char) * size + 1)))
 		return (NULL);
-	while (s1[i])
+	while (s1[i] != '\0')
 		dest[j++] = s1[i++];
 	i = 0;
 	while (s2[i] && n > 0)
@@ -75,12 +93,13 @@ int					get_next_line(int fd, char **line)
 	{
 		if (!(*line = strjoingnl(*line, buffer, 4096)))
 			return (-1);
-		if ((ret = read(fd, buffer, 4096)) == 0)
-		{
-			return (0);
-		}
+		if ((ret = read(fd, buffer, 4096)) == -1)
+			return (-1);
 		buffer[ret] = 0;
+		(ret == 0 || buffer[ret - 1] != '\n') ? ft_printf("  \b\b") : 0;
 	}
+	if (newline_check(*line, ret) == 2)
+		return (-2);
 	if (!(*line = strjoingnl(*line, buffer, ret2)))
 		return (-1);
 	if (ret)
