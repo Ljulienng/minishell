@@ -6,56 +6,33 @@
 /*   By: user42 <user42@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/10/19 16:55:24 by user42            #+#    #+#             */
-/*   Updated: 2021/01/29 17:19:01 by user42           ###   ########.fr       */
+/*   Updated: 2021/02/02 17:45:09 by user42           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../includes/minishell.h"
 
-void			redir_cmd2(t_data *shell, int pipe, int next_opt, int prev_opt)
+void			redir_cmd(t_data *shell, t_arg *arg)
 {
-	if (shell->pid > 0 && !pipe && !shell->noexec)
-		start_piping(shell, current_arg(shell, shell->params.old_index));
-	else if ((prev_opt == PIPE || !prev_opt || prev_opt == SEMI_C)
-	&& pipe == 2 && !shell->noexec && next_opt > 1)
-		start_piping(shell, current_arg(shell, shell->params.old_index));
-	else if ((prev_opt == PIPE || !prev_opt || prev_opt == SEMI_C)
-	&& pipe == 2 && !shell->noexec && next_opt < 2)
-		start_piping(shell, current_arg(shell, shell->params.arg_index));
-	else if ((prev_opt == PIPE || !prev_opt) && pipe == 0 && !shell->noexec
-	&& (!shell->params.child && !shell->params.parent) && next_opt > 1
-	&& next_opt != PIPE)
-		start_piping(shell, current_arg(shell, 0));
-	else if ((prev_opt == PIPE || !prev_opt) && pipe == 0 && !shell->noexec
-	&& (!shell->params.child && !shell->params.parent))
-		start_piping(shell, current_arg(shell, 0));
-	else if ((prev_opt == PIPE || !prev_opt) && pipe == 0 && !shell->noexec
-	&& (shell->params.child && !shell->params.parent) &&
-	!shell->params.semicolon && next_opt < 2)
-		start_piping(shell, current_arg(shell, shell->params.old_index));
-}
+	t_arg	*next_opt;
+	t_arg	*prev_opt;
+	int		pipe;
 
-void			redir_cmd(t_data *shell, int index, int prev, int next)
-{
-	int next_opt;
-	int prev_opt;
-	int pipe;
-
-	shell->params.old_index = shell->params.arg_index;
 	pipe = 0;
-	prev_opt = prev_option(shell, index);
-	next_opt = curr_option(shell, index);
-	(void)prev;
-	(void)next;
-	if (shell->pid == -1 && (prev_opt == R_ANGLE || prev_opt == D_ANGLE))
-		redirect(shell, prev_opt);
-	else if (prev_opt == L_ANGLE)
-		input(shell);
-	else if (prev_opt == PIPE)
+	prev_opt = prev_sep(arg);
+	next_opt = next_sep(arg);
+	if (prev_opt && (prev_opt->type == R_ANGLE || prev_opt->type == D_ANGLE))
+		redirect(shell, arg);
+	else if (prev_opt && prev_opt->type == L_ANGLE)
+		input(shell, arg);
+	else if (prev_opt && prev_opt->type == PIPE)
 		pipe = ft_pipe(shell);
-	if (next_opt && next_opt != SEMI_C && pipe != 1)
-		redir_cmd(shell, shell->params.arg_index + 1, prev_opt, next_opt);
-	redir_cmd2(shell, pipe, next_opt, prev_opt);
+	if (next_opt && next_opt->type != SEMI_C && pipe != 1)
+		redir_cmd(shell, next_opt->next);
+	if (((prev_opt && prev_opt->type == SEMI_C) ||
+	(prev_opt && prev_opt->type == PIPE)
+	|| !prev_opt) && pipe != 1 && !shell->noexec)
+		ft_exec(shell, arg);
 }
 
 static int		process_cmd(t_data *shell)
@@ -87,9 +64,28 @@ static int		process_cmd(t_data *shell)
 	return (1);
 }
 
+static void		cmd_loop(t_data *shell, t_arg *current)
+{
+	while (!shell->exit && current)
+	{
+		shell->params.parent = 0;
+		shell->params.child = 0;
+		shell->cmd_switch = 1;
+		redir_cmd(shell, current);
+		reset_fd(shell);
+		close_fd(shell);
+		reset_stds(shell);
+		current = next_run(current, 1);
+		if (shell->params.child == 1)
+			break ;
+		shell->noexec = 0;
+	}
+}
+
 void			detect_cmd(t_data *shell)
 {
-	int i;
+	int		i;
+	t_arg	*current;
 
 	i = 0;
 	if (!process_cmd(shell))
@@ -102,9 +98,8 @@ void			detect_cmd(t_data *shell)
 	}
 	if (shell->arg[0] == NULL)
 		return ;
-	redir_cmd(shell, 0, 0, 0);
-	if (((shell->params.child && !shell->params.parent) \
-	|| (!shell->params.child \
-	&& !shell->params.parent)) && shell->params.semicolon && shell->pid == -1)
-		do_next_cmd(shell);
+	set_arglist(shell);
+	current = shell->arg_list;
+	cmd_loop(shell, current);
+	arg_listclear(shell->arg_list);
 }

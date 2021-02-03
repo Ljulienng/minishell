@@ -6,29 +6,11 @@
 /*   By: user42 <user42@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/12/07 13:47:34 by user42            #+#    #+#             */
-/*   Updated: 2021/01/26 15:00:30 by user42           ###   ########.fr       */
+/*   Updated: 2021/02/03 15:07:48 by user42           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../includes/minishell.h"
-
-void	do_next_cmd(t_data *shell)
-{
-	shell->params.old_index = 0;
-	shell->params.arg_index = 0;
-	close_fd(shell);
-	reset_fd(shell);
-	reset_stds(shell);
-	shell->params.semicolon--;
-	process_semicolon(shell, 0);
-	if (shell->arg[0] == NULL)
-		return ;
-	redir_cmd(shell, 0, 0, 0);
-	if (((shell->params.child && !shell->params.parent) \
-	|| (!shell->params.child \
-	&& !shell->params.parent)) && shell->params.semicolon && shell->pid == -1)
-		do_next_cmd(shell);
-}
 
 void	process_semicolon(t_data *shell, int option)
 {
@@ -53,4 +35,24 @@ void	process_semicolon(t_data *shell, int option)
 	if (option)
 		free_arg(shell);
 	shell->arg = arg;
+}
+
+void	print_env2(t_data *shell, char *str, int *i)
+{
+	char	tmp[1024];
+	int		j;
+
+	if (str[*i] == '$' && !str[*i + 1])
+		return ;
+	j = 0;
+	tmp[0] = '\0';
+	*i += 1;
+	while (str[*i] && !is_from(str[*i], ";|<> "))
+	{
+		tmp[j] = str[*i];
+		j++;
+		*i += 1;
+	}
+	tmp[j] = '\0';
+	print_env(shell, tmp);
 }

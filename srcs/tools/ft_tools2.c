@@ -6,7 +6,7 @@
 /*   By: user42 <user42@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/12/07 18:37:32 by user42            #+#    #+#             */
-/*   Updated: 2021/01/27 15:56:20 by user42           ###   ########.fr       */
+/*   Updated: 2021/02/02 14:30:45 by user42           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,7 +32,6 @@ void	reset_options(t_data *shell)
 	shell->params.l_angle = 0;
 	shell->params.d_angle = 0;
 	shell->params.pipe = 0;
-	shell->params.opt_index = 0;
 }
 
 int		is_option(t_data *shell, char *arg)

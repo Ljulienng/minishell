@@ -6,7 +6,7 @@
 /*   By: user42 <user42@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/01/14 16:12:55 by user42            #+#    #+#             */
-/*   Updated: 2021/01/28 20:16:06 by user42           ###   ########.fr       */
+/*   Updated: 2021/02/03 15:07:59 by user42           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,6 +36,15 @@
 # define L_ANGLE 4
 # define PIPE 5
 # define ARG 6
+# define CMD 7
+
+typedef struct		s_arg
+{
+	char			*str;
+	int				type;
+	struct s_arg	*next;
+	struct s_arg	*prev;
+}					t_arg;
 
 typedef	struct		s_sig
 {
@@ -56,10 +65,6 @@ typedef struct		s_param
 	int				child;
 	int				parent;
 	int				semicolon;
-	int				opt_index;
-	int				old_index;
-	int				arg_index;
-	int				old_arg;
 	int				switch_pipe;
 }					t_param;
 
@@ -78,6 +83,7 @@ typedef struct		s_data
 	int				fd_out;
 	int				in;
 	int				out;
+	int				cmd_switch;
 	int				squote_env;
 	int				dquote_flag;
 	int				squote_flag;
@@ -94,6 +100,7 @@ typedef struct		s_data
 	t_sig			*sig;
 	t_param			params;
 	t_list			*trash;
+	t_arg			*arg_list;
 }					t_data;
 /*
 ** Commands
@@ -110,7 +117,7 @@ int					exec_bin(t_data *shell, char **arg);
 /*
 ** detect_cmd.c
 */
-void				redir_cmd(t_data *shell, int index, int prev, int next);
+void				redir_cmd(t_data *shell, t_arg *arg);
 void				detect_cmd(t_data *shell);
 void				count_arg(t_data *shell);
 int					store_arg(t_data *shell);
@@ -130,6 +137,7 @@ int					exec_env(t_data *shell, char **arg);
 int					del_env(t_data *shell, char *env);
 void				sorted_env(t_data *shell);
 int					is_valid_env(char *env);
+void				print_env2(t_data *shell, char *str, int *i);
 /*
 ** ft_tools.c
 */
@@ -160,15 +168,17 @@ void				close_fd(t_data *shell);
 void				reset_fd(t_data *shell);
 void				close_onefd(int fd);
 void				reset_stds(t_data *shell);
-void				redirect(t_data *shell, int curr_opt);
+void				redirect(t_data *shell, t_arg *arg);
 int					ft_pipe(t_data *shell);
-void				input(t_data *shell);
-int					prev_option(t_data *shell, int index);
-int					curr_option(t_data *shell, int option);
-int					next_option(t_data *shell, int i);
+void				input(t_data *shell, t_arg *arg);
+t_arg				*next_sep(t_arg *arg);
+t_arg				*prev_sep(t_arg *arg);
+t_arg				*next_run(t_arg *arg, int skip);
 void				process_semicolon(t_data *shell, int option);
 int					current_arg(t_data *shell, int opt_index);
-void				start_piping(t_data *shell, int index);
-
+void				ft_exec(t_data *shell, t_arg *arg);
+void				set_arglist(t_data *shell);
+void				arg_listclear(t_arg *lst);
+int					is_type(t_arg *arg, int type);
 extern t_sig g_sig;
 #endif

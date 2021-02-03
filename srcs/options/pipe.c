@@ -6,7 +6,7 @@
 /*   By: user42 <user42@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/01/13 14:52:24 by user42            #+#    #+#             */
-/*   Updated: 2021/01/28 16:22:22 by user42           ###   ########.fr       */
+/*   Updated: 2021/02/03 18:02:38 by user42           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,6 +35,9 @@ static void	arg_quote(t_data *shell, char **arg)
 	i = 0;
 	while (arg[i])
 	{
+		if (i >= 1 && !ft_strncmp(arg[i - 1], "echo", 5) &&
+		ft_strncmp(arg[i], "-n", 3) != 0)
+			return ;
 		if (arg[i][0] == '"')
 			arg_check(shell, arg[i], 1);
 		else if (arg[i][0] == '\'')
@@ -43,57 +46,61 @@ static void	arg_quote(t_data *shell, char **arg)
 	}
 }
 
-static char	**arg_pipe(t_data *shell, int index)
+static char	**cmd_tab(t_arg *arg)
 {
-	char	**arg;
+	t_arg	*start;
+	char	**tab;
 	int		i;
-	int		j;
 
-	i = index;
-	j = 0;
-	while (shell->arg[i] && !is_option(shell, shell->arg[i]))
+	if (!arg)
+		return (NULL);
+	start = arg->next;
+	i = 2;
+	while (start && (!start->type || start->type > 5))
 	{
-		j++;
+		start = start->next;
 		i++;
 	}
-	if (!(arg = malloc((j + 1) * sizeof(char *))))
+	if (!(tab = malloc(sizeof(char *) * i)))
 		return (NULL);
-	i = index;
-	j = 0;
-	while (shell->arg[i] && !is_option(shell, shell->arg[i]))
+	start = arg->next;
+	tab[0] = arg->str;
+	i = 1;
+	while (start && (!start->type || start->type > 5))
 	{
-		if (!(arg[j] = malloc(ft_strlen(shell->arg[i]) + 1)))
-			return (NULL);
-		ft_strcpy(arg[j++], shell->arg[i++]);
+		tab[i++] = start->str;
+		start = start->next;
 	}
-	arg[j] = NULL;
-	return (arg);
+	tab[i] = NULL;
+	return (tab);
 }
 
-void		start_piping(t_data *shell, int index)
+void		ft_exec(t_data *shell, t_arg *arg)
 {
-	char **arg;
+	char **cmds;
 
-	arg = arg_pipe(shell, index);
-	arg_quote(shell, arg);
+	if (!shell->cmd_switch)
+		return ;
+	cmds = cmd_tab(arg);
+	arg_quote(shell, cmds);
 	if (!ft_strlen(shell->cmd_line))
 		return ;
-	if (shell->arg[0][0] == '$')
-		if (!exec_env(shell, arg))
+	if (cmds[0][0] == '$')
+		if (!exec_env(shell, cmds))
 		{
-			clean_str(arg);
+			clean_str(cmds);
 			return ;
 		}
-	if (!is_builtin(shell, arg))
-		shell->ret = exec_bin(shell, arg);
-	if (arg[0] && arg)
-		clean_str(arg);
+	if (!is_builtin(shell, cmds))
+		shell->ret = exec_bin(shell, cmds);
+	free(cmds);
 	if (shell->pip_in > 0)
 		close(shell->pip_in);
 	if (shell->pip_out > 0)
 		close(shell->pip_out);
 	shell->pip_in = -1;
 	shell->pip_out = -1;
+	shell->cmd_switch = 0;
 }
 
 int			ft_pipe(t_data *shell)

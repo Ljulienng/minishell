@@ -6,30 +6,29 @@
 /*   By: user42 <user42@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/10/23 14:14:01 by user42            #+#    #+#             */
-/*   Updated: 2021/01/28 16:35:36 by user42           ###   ########.fr       */
+/*   Updated: 2021/02/03 19:25:37 by user42           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../includes/minishell.h"
 
-static void	print_env2(t_data *shell, char *str, int *i)
+static void	clean_arg3(int back, char *str, int *j, int i)
 {
-	char	tmp[1024];
-	int		j;
-
-	if (str[*i] == '$' && !str[*i + 1])
-		return ;
-	j = 0;
-	tmp[0] = '\0';
-	*i += 1;
-	while (str[*i] && !is_from(str[*i], ";|<> "))
+	if (!is_from(str[i], "'\"") || (i >= 1 && \
+		back % 2 != 0 && str[i - 1] == '\\' && (str[i] == '"' ||
+		str[i] == '\'')))
 	{
-		tmp[j] = str[*i];
-		j++;
-		*i += 1;
+		if (str[i] == '\\' && str[*j] != '\\' && !is_from(str[0], "'\""))
+			*j += 1;
+		str[*j] = str[i];
+		*j += 1;
 	}
-	tmp[j] = '\0';
-	print_env(shell, tmp);
+	else if ((i > 1 && back % 2 == 0 && str[i - 1] == '\\'
+	&& str[i - 2] != '\\') && is_from(str[i], "\"'"))
+	{
+		str[*j] = str[i];
+		*j += 1;
+	}
 }
 
 static void	print_echo(t_data *shell, char *str, int quote)
@@ -42,8 +41,13 @@ static void	print_echo(t_data *shell, char *str, int quote)
 		if (str[i] == '$' && !is_from(str[i + 1], ";|<> ")\
 			&& !shell->squote_env)
 			print_env2(shell, str, &i);
-		if ((!quote || quote == 2) && \
-		str[i] == '\\' && is_from(str[i + 1], "\\\""))
+		if (!quote && str[i] == '\\' && str[i + 1])
+		{
+			ft_printf("%c", str[i + 1]);
+			i++;
+		}
+		else if ((!quote || quote == 2) && \
+		str[i] == '\\' && is_from(str[i + 1], "\\\"'"))
 		{
 			ft_printf("%c", str[i + 1]);
 			i++;
@@ -94,9 +98,8 @@ static int	clean_arg(t_data *shell, char *str)
 			str[j++] = str[i];
 		else if (str[i] == '"' && shell->squote_flag)
 			str[j++] = str[i];
-		else if (!is_from(str[i], "'\"") || (i > 1 && \
-		back % 2 != 0 && str[i - 1] == '\\' && str[i] == '"'))
-			str[j++] = str[i];
+		else
+			clean_arg3(back, str, &j, i);
 		i++;
 		quote_switch2(shell, &i, str, back);
 	}

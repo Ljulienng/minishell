@@ -6,7 +6,7 @@
 /*   By: user42 <user42@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/10/19 16:55:42 by user42            #+#    #+#             */
-/*   Updated: 2021/01/29 14:43:36 by user42           ###   ########.fr       */
+/*   Updated: 2021/02/02 14:29:48 by user42           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,6 +18,7 @@ static void	signal_handlers(t_data *shell)
 {
 	shell->params.parent = 0;
 	shell->params.child = 0;
+	shell->cmd_switch = 1;
 	signal_reset(shell);
 	signal(SIGINT, &signal_int);
 	signal(SIGQUIT, &signal_quit);
